@@ -23,7 +23,7 @@ describe("Key Value store application", function() {
         async: true,
         custom_setup: function(api) {
             // prime the kv store with a value
-            api.kv_store['user-counter-for-1234567'] = 10;
+            api.kv_store['user-counter-for-1234567'] = '10';
         }
     });
 

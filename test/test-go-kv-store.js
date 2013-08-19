@@ -20,18 +20,56 @@ describe("test api", function() {
 describe("Key Value store application", function() {
 
     var tester = new vumigo.test_utils.ImTester(app.api, {
-        async: true
+        async: true,
+        custom_setup: function(api) {
+            // prime the kv store with a value
+            api.kv_store['user-counter-for-1234567'] = 10;
+        }
     });
 
-    it('should increment the key and end the session', function(done) {
+    it('should ask for a starting number', function(done) {
         var p = tester.check_state({
             user: null,
             content: null,
-            next_state: 'done',  // it's only 1 state that we return to,
-            response: 'You are visitor number 1',
-            continue_session: false
+            next_state: 'number',
+            response: 'Give me a number!'
         });
         p.then(done, done);
     });
 
+    it('should add one', function(done) {
+        var p = tester.check_state({
+            user: {
+                current_state: 'action',
+            },
+            content: '1',
+            next_state: 'done',
+            response: 'Your counter is 11',
+            continue_session: false
+        }).then(done, done);
+    });
+
+    it('should subtract one', function(done) {
+        var p = tester.check_state({
+            user: {
+                current_state: 'action',
+            },
+            content: '2',
+            next_state: 'done',
+            response: 'Your counter is 9',
+            continue_session: false
+        }).then(done, done);
+    });
+
+    it('should echo the value', function(done) {
+        var p = tester.check_state({
+            user: {
+                current_state: 'action',
+            },
+            content: '3',
+            next_state: 'done',
+            response: 'Your counter is 10',
+            continue_session: false
+        }).then(done, done);
+    });
 });
